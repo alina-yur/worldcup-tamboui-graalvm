@@ -7,13 +7,13 @@ June 29, 2026:
 - Round of 32 pairings
 - emoji flags
 - fixed date and integer formatting
-- `String.format` in the rendering path
+- constant simple `String.format` and `String::formatted` calls in the rendering path
 - static tournament data initialized into the native image heap
 - reflection metadata via `config/reflect-config.json`
 
 The point is one binary that touches the areas used in the Native Image size
-work: metadata, image heap storage, and `String.format`, while staying on the
-small-app path that does not use locale formatting.
+work: metadata, image heap storage, and the GR-76005 constant formatting
+optimization, while avoiding explicit locale APIs in the app code.
 
 ## Build The Native App
 

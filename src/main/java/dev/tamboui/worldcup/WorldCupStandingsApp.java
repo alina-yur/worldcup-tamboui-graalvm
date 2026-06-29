@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -222,7 +221,7 @@ public final class WorldCupStandingsApp {
             Span.raw(snapshotDate).yellow()
         );
         Line subtitle = Line.from(
-            Span.raw(String.format(Locale.ROOT, "%s teams, %s Round of 32 ties", totalTeams, totalFixtures)).green()
+            Span.raw(WorldCupFormatText.headerCounts(totalTeams, totalFixtures)).green()
         );
 
         var paragraph = Paragraph.builder()
@@ -272,13 +271,13 @@ public final class WorldCupStandingsApp {
                 ? Style.EMPTY.green()
                 : team.rank() == 3 ? Style.EMPTY.yellow() : Style.EMPTY.gray();
             rows.add(Row.from(
-                cell(String.format(Locale.ROOT, "%d", team.rank()), style),
-                cell(String.format(Locale.ROOT, "%s %s", team.emoji(), team.name()), style),
+                cell(WorldCupFormatText.rank(team.rank()), style),
+                cell(WorldCupFormatText.teamLabel(team.emoji(), team.name()), style),
                 cell(String.valueOf(team.played()), Style.EMPTY.white()),
                 cell(team.record(), Style.EMPTY.white()),
                 cell(String.valueOf(team.goalsFor()), Style.EMPTY.white()),
                 cell(String.valueOf(team.goalsAgainst()), Style.EMPTY.white()),
-                cell(String.format(Locale.ROOT, "%+d", team.goalDifference()), gdStyle(team.goalDifference())),
+                cell(WorldCupFormatText.goalDifference(team.goalDifference()), gdStyle(team.goalDifference())),
                 cell(String.valueOf(team.points()), Style.EMPTY.bold().yellow())
             ));
         }
@@ -338,9 +337,9 @@ public final class WorldCupStandingsApp {
             rows.add(Row.from(
                 cell(shortDate(fixture), statusStyle),
                 cell(statusLabel(fixture), statusStyle),
-                cell(String.format(Locale.ROOT, "%s %s %s", fixture.leftSeed(), fixture.leftEmoji(), fixture.leftTeam()), Style.EMPTY.white()),
+                cell(WorldCupFormatText.fixtureTeam(fixture.leftSeed(), fixture.leftEmoji(), fixture.leftTeam()), Style.EMPTY.white()),
                 cell(fixture.score(), Style.EMPTY.bold().yellow()),
-                cell(String.format(Locale.ROOT, "%s %s %s", fixture.rightSeed(), fixture.rightEmoji(), fixture.rightTeam()), Style.EMPTY.white())
+                cell(WorldCupFormatText.fixtureTeam(fixture.rightSeed(), fixture.rightEmoji(), fixture.rightTeam()), Style.EMPTY.white())
             ));
         }
         if (rows.isEmpty()) {
@@ -384,22 +383,16 @@ public final class WorldCupStandingsApp {
             Span.raw("  focus: ").dim(),
             Span.raw(focus == Focus.STANDINGS ? "standings" : "fixtures").yellow()
         );
-        String metadataLine = String.format(
-            Locale.ROOT,
-            "reflection metadata: %d types / %d record components / %d methods",
+        String metadataLine = WorldCupFormatText.metadataLine(
             digest.types(),
             digest.recordComponents(),
             digest.methods()
         );
-        String heapLine = String.format(
-            Locale.ROOT,
-            "image heap data: %d groups, %d teams initialized with WorldCupData",
+        String heapLine = WorldCupFormatText.heapLine(
             WorldCupData.SNAPSHOT.groups().size(),
             totalTeams()
         );
-        String formatLine = String.format(
-            Locale.ROOT,
-            "formatting path: deterministic String.format rows=%d",
+        String formatLine = WorldCupFormatText.formatLine(
             totalTeams() + WorldCupData.SNAPSHOT.fixtures().size()
         );
 
@@ -409,7 +402,8 @@ public final class WorldCupStandingsApp {
                 searchLine,
                 Line.from(Span.raw(metadataLine).cyan()),
                 Line.from(Span.raw(heapLine).green()),
-                Line.from(Span.raw(formatLine).yellow())
+                Line.from(Span.raw(formatLine).yellow()),
+                Line.from(Span.raw(WorldCupFormatText.probeLine()).magenta())
             ))
             .block(Block.builder()
                 .borders(Borders.ALL)
@@ -740,7 +734,7 @@ public final class WorldCupStandingsApp {
             return Line.from(
                 Span.raw("selected: ").dim(),
                 Span.raw(team.emoji() + " " + team.name()).bold().yellow(),
-                Span.raw(String.format(Locale.ROOT, "  %d pts, GD %+d, record %s", team.points(), team.goalDifference(), team.record())).white()
+                Span.raw(WorldCupFormatText.teamDetail(team.points(), team.goalDifference(), team.record())).white()
             );
         }
 

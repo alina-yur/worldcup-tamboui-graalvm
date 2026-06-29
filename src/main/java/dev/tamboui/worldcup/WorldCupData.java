@@ -2,7 +2,6 @@ package dev.tamboui.worldcup;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 
 public final class WorldCupData {
     public static final TournamentSnapshot SNAPSHOT = new TournamentSnapshot(
@@ -43,7 +42,7 @@ public final class WorldCupData {
         }
 
         String record() {
-            return String.format(Locale.ROOT, "%d-%d-%d", wins, draws, losses);
+            return WorldCupFormatText.record(wins, draws, losses);
         }
     }
 
